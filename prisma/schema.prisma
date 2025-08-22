@@ -10,7 +10,6 @@ datasource db {
 model RawMaterial {
   id        Int      @id @default(autoincrement())
   name      String   @unique
-  unit      String
   prices    RawMaterialPrice[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -20,9 +19,7 @@ model RawMaterialPrice {
   id          Int      @id @default(autoincrement())
   materialId  Int
   material    RawMaterial @relation(fields: [materialId], references: [id])
-  price       Float
+  price       Int      // Changed to Int for Kamas (no decimals)
   date        DateTime @default(now())
   createdAt   DateTime @default(now())
 }
-
-// We'll add Recipes and Production later
