@@ -1,4 +1,3 @@
-// src/context/MaterialsContext.js
 'use client';
 import { createContext, useContext } from 'react';
 import useSWR from 'swr';
@@ -13,7 +12,7 @@ export function MaterialsProvider({ children }) {
     error,
     mutate,
   } = useSWR('/api/materials', fetcher, {
-    refreshInterval: 30000, // Refresh every 30 seconds
+    refreshInterval: 30000,
   });
 
   const addMaterial = async (materialData) => {
@@ -24,7 +23,7 @@ export function MaterialsProvider({ children }) {
     });
 
     if (response.ok) {
-      mutate(); // Refresh the materials list
+      mutate();
     }
 
     return response;
@@ -38,7 +37,7 @@ export function MaterialsProvider({ children }) {
     });
 
     if (response.ok) {
-      mutate(); // Refresh the materials list
+      mutate();
     }
 
     return response;
