@@ -8,18 +8,39 @@ datasource db {
 }
 
 model RawMaterial {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  prices    RawMaterialPrice[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                Int                @id @default(autoincrement())
+  name              String             @unique
+  prices            RawMaterialPrice[]
+  recipeIngredients RecipeIngredient[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 }
 
 model RawMaterialPrice {
+  id         Int         @id @default(autoincrement())
+  materialId Int
+  material   RawMaterial @relation(fields: [materialId], references: [id])
+  price      Int // Changed to Int for Kamas (no decimals)
+  date       DateTime    @default(now())
+  createdAt  DateTime    @default(now())
+}
+
+model Recipe {
+  id            Int                @id @default(autoincrement())
+  name          String             @unique
+  description   String?
+  // Dofus-specific: yield quantity for crafting
+  yieldQuantity Int                @default(1)
+  ingredients   RecipeIngredient[]
+  createdAt     DateTime           @default(now())
+}
+
+model RecipeIngredient {
   id          Int      @id @default(autoincrement())
+  recipeId    Int
   materialId  Int
-  material    RawMaterial @relation(fields: [materialId], references: [id])
-  price       Int      // Changed to Int for Kamas (no decimals)
-  date        DateTime @default(now())
+  quantity    Int
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  material    RawMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
 }
