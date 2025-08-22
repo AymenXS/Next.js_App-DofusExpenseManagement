@@ -20,14 +20,11 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { name, initialPrice } = await request.json()
-    
+    const { name, initialPrice } = await request.json();
+
     // Validate input
     if (!name || !initialPrice) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const material = await prisma.rawMaterial.create({
@@ -35,29 +32,23 @@ export async function POST(request) {
         name: name.trim(),
         prices: {
           create: {
-            price: parseInt(initialPrice) // Changed to parseInt
-          }
-        }
+            price: parseInt(initialPrice), // Changed to parseInt
+          },
+        },
       },
       include: {
         prices: {
           orderBy: { date: 'desc' },
-          take: 1
-        }
-      }
-    })
-    
-    return NextResponse.json(material)
+          take: 1,
+        },
+      },
+    });
+
+    return NextResponse.json(material);
   } catch (error) {
     if (error.code === 'P2002') {
-      return NextResponse.json(
-        { error: 'Material already exists' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Material already exists' }, { status: 400 });
     }
-    return NextResponse.json(
-      { error: 'Failed to create material' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create material' }, { status: 500 });
   }
-}}
+}
