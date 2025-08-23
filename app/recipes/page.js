@@ -1,13 +1,9 @@
 'use client'
-import { RecipesProvider } from '@/context/RecipesContext'
-import { MaterialsProvider } from '@/context/MaterialsContext'
 import AddRecipeForm from '@/components/recipes/AddRecipeForm'
 import RecipesList from '@/components/recipes/RecipesList'
 
 export default function RecipesPage() {
   return (
-    <MaterialsProvider>
-      <RecipesProvider>
         <div className="min-h-screen bg-gray-100 py-8">
           <div className="max-w-6xl mx-auto px-4 space-y-8">
             <header className="text-center">
@@ -21,7 +17,5 @@ export default function RecipesPage() {
             </div>
           </div>
         </div>
-      </RecipesProvider>
-    </MaterialsProvider>
   )
 }

@@ -37,13 +37,13 @@ export default function RecipesList() {
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-blue-600">{recipe.name}</h3>
-                  <p className="text-sm text-gray-600 mb-2">Yield: {recipe.yieldQuantity} item(s)</p>
+                  <p className="text-sm text-gray-600 mb-2">Yield: {recipe.quantity} item(s)</p>
 
                   <div className="space-y-1">
-                    {recipe.materials.map((rm) => (
-                      <div key={rm.id} className="flex justify-between text-sm">
-                        <span className="text-gray-700">{rm.material.name}</span>
-                        <span className="text-gray-900 font-medium">{rm.quantity} unit(s)</span>
+                    {recipe.materials.map((recipeMaterial) => (
+                      <div key={recipeMaterial.id} className="flex justify-between text-sm">
+                        <span className="text-gray-700">{recipeMaterial.material.name}</span>
+                        <span className="text-gray-900 font-medium">{recipeMaterial.quantity} unit(s)</span>
                       </div>
                     ))}
                   </div>
