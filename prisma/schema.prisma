@@ -28,7 +28,7 @@ model RawMaterialPrice {
 model Recipe {
   id            Int              @id @default(autoincrement())
   name          String           @unique
-  yieldQuantity Int              @default(1)  
+  quantity      Int              @default(1)  
   materials     RecipeMaterial[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt   
