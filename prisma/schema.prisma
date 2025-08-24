@@ -30,6 +30,7 @@ model Recipe {
   name          String           @unique
   quantity      Int              @default(1)  
   materials     RecipeMaterial[]
+  productionBatches ProductionBatch[] 
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt   
 }
@@ -42,4 +43,16 @@ model RecipeMaterial {
   recipe      Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   material    RawMaterial  @relation(fields: [materialId], references: [id], onDelete: Cascade)
   createdAt   DateTime     @default(now())
+}
+
+model ProductionBatch {
+  id          Int      @id @default(autoincrement())
+  recipeId    Int
+  quantity    Int      // How many items were crafted
+  totalCost   Int      // Total cost in Kamas (auto-calculated)
+  date        DateTime @default(now())
+  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  
+  @@map("production_batches") 
 }
