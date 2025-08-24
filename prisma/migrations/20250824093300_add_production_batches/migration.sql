@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "production_batches" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "recipeId" INTEGER NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "totalCost" INTEGER NOT NULL,
+    "date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "production_batches_recipeId_fkey" FOREIGN KEY ("recipeId") REFERENCES "Recipe" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
