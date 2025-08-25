@@ -9,7 +9,7 @@ const fetcher = (url) => fetch(url).then(res => res.json())
 export function AnalyticsProvider({ children }) {
   // Fetch all analytics data
   const { data: overview, error: overviewError, mutate: refreshOverview } = useSWR('/api/analytics/overview', fetcher, {
-    refreshInterval: 30000 // Refresh every 30 seconds
+    refreshInterval: 30000 
   })
   
   const { data: priceTrends, error: priceTrendsError, mutate: refreshPriceTrends } = useSWR('/api/analytics/price-trends', fetcher)
