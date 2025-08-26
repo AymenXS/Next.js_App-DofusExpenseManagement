@@ -47,7 +47,7 @@ export async function POST(request) {
       // 2. Create all recipe materials
       const recipeMaterialsData = materials.map((recipeMaterial) => ({
         recipeId: newRecipe.id,
-        materialId: recipeMaterial.materialId,
+        materialId: parseInt(recipeMaterial.materialId),
         quantity: parseInt(recipeMaterial.quantity),
       }));
 
