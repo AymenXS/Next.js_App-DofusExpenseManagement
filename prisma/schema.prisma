@@ -1,58 +1,42 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
+// prisma/schema.prisma
 model RawMaterial {
-  id                Int                @id @default(autoincrement())
-  name              String             @unique
-  prices            RawMaterialPrice[]
-  recipeMaterials   RecipeMaterial[]   
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  prices    RawMaterialPrice[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model RawMaterialPrice {
-  id         Int         @id @default(autoincrement())
-  materialId Int
-  material   RawMaterial @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  price      Int
-  date       DateTime    @default(now())
-  createdAt  DateTime    @default(now())
-}
-
-model Recipe {
-  id            Int              @id @default(autoincrement())
-  name          String           @unique
-  quantity      Int              @default(1)  
-  materials     RecipeMaterial[]
-  productionBatches ProductionBatch[] 
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt   
-}
-
-model RecipeMaterial {
-  id          Int          @id @default(autoincrement())
-  recipeId    Int
-  materialId  Int
-  quantity    Int
-  recipe      Recipe       @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-  material    RawMaterial  @relation(fields: [materialId], references: [id], onDelete: Cascade)
-  createdAt   DateTime     @default(now())
-}
-
-model ProductionBatch {
+model Item {
   id          Int      @id @default(autoincrement())
-  recipeId    Int
-  quantity    Int      // How many items were crafted
-  totalCost   Int      // Total cost in Kamas (auto-calculated)
-  date        DateTime @default(now())
-  recipe      Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  name        String   @unique
+  description String?
+  yieldQuantity Int    @default(1)
+  isFinal     Boolean  @default(false) // Final product or intermediate
+  ingredients ItemIngredient[]
+  sellingPrice Int?    // Manual selling price
   createdAt   DateTime @default(now())
-  
-  @@map("production_batches") 
+  updatedAt   DateTime @updatedAt
+}
+
+model ItemIngredient {
+  id          Int      @id @default(autoincrement())
+  itemId      Int      // The item being crafted
+  ingredientId Int     // Could be RawMaterial OR another Item
+  ingredientType String // "RAW_MATERIAL" or "ITEM"
+  quantity    Int
+  item        Item     @relation("CraftedItem", fields: [itemId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model ProductionOrder {
+  id          Int      @id @default(autoincrement())
+  itemId      Int
+  quantity    Int
+  totalCost   Int      // Auto-calculated
+  sellingPrice Int     // Manual input
+  expectedProfit Int   // Auto-calculated: (sellingPrice * quantity) - totalCost
+  date        DateTime @default(now())
+  item        Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
 }
