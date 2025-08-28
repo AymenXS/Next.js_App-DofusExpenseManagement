@@ -17,7 +17,7 @@ export async function GET() {
       prisma.productionOrder.findMany({
         take: 5,
         include: {
-          recipe: true,
+          item: true,
         },
         orderBy: {
           createdAt: 'desc',

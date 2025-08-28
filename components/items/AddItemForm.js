@@ -3,16 +3,22 @@ import { useState } from 'react';
 import { useMaterials } from '@/context/MaterialsContext';
 import { useItems } from '@/context/ItemsContext';
 
-export default function AddRecipeForm() {
+export default function AddItemForm() {
   const [name, setName] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [ingredients, setIngredients] = useState([{ materialId: '', quantity: 1 }]);
+  const [ingredients, setIngredients] = useState([
+    {
+      ingredientId: '',
+      ingredientType: 'RAW_MATERIAL',
+      quantity: 1,
+    },
+  ]);
 
   const { materials, loading: materialsLoading } = useMaterials();
   const { addItem, isAdding } = useItems();
 
   const addIngredient = () => {
-    setIngredients([...ingredients, { materialId: '', quantity: 1 }]);
+    setIngredients([...ingredients, { ingredientId: '', ingredientType: 'RAW_MATERIAL', quantity: 1 }]);
   };
 
   const removeIngredient = (index) => {
@@ -31,23 +37,30 @@ export default function AddRecipeForm() {
     e.preventDefault();
 
     // Filter out empty ingredients
-    const validIngredients = ingredients.filter((ing) => ing.materialId && ing.quantity > 0);
+    const validIngredients = ingredients.filter((ingredient) => ingredient.ingredientId && ingredient.quantity > 0);
 
     if (!name || validIngredients.length === 0) {
       alert('Please provide a item name and at least one ingredient');
       return;
     }
 
-    const result = await addItem({
+    // Transform the data to match API expectations
+    const formattedData = {
       name,
-      quantity,
-      materials: validIngredients,
-    });
+      quantity: parseInt(quantity) || 1,
+      ingredients: validIngredients.map((ing) => ({
+        ingredientId: parseInt(ing.ingredientId),
+        ingredientType: 'RAW_MATERIAL',
+        quantity: parseInt(ing.quantity) || 1,
+      })),
+    };
+
+    const result = await addItem(formattedData);
 
     if (result.success) {
       setName('');
       setQuantity(1);
-      setIngredients([{ materialId: '', quantity: 1 }]);
+      setIngredients([{ ingredientId: '', ingredientType: 'RAW_MATERIAL', quantity: 1 }]);
       alert('Item created successfully!');
     } else {
       alert(`Error: ${result.error}`);
@@ -97,8 +110,8 @@ export default function AddRecipeForm() {
             {ingredients.map((ingredient, index) => (
               <div key={index} className="flex gap-2 items-start">
                 <select
-                  value={ingredient.materialId}
-                  onChange={(e) => updateIngredient(index, 'materialId', e.target.value)}
+                  value={ingredient.ingredientId}
+                  onChange={(e) => updateIngredient(index, 'ingredientId', e.target.value)}
                   className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 >
