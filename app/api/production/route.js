@@ -1,63 +1,21 @@
 import { prisma } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-// Utility function to calculate batch cost
-async function calculateBatchCost(recipeId, batchQuantity, productionDate) {
-  // Convert recipeId to integer
-  const parsedRecipeId = parseInt(recipeId);
-
-  // Validate that recipeId is a valid number
-  if (isNaN(parsedRecipeId)) {
-    throw new Error('Invalid recipe ID provided');
-  }
-
-  const recipe = await prisma.recipe.findUnique({
-    where: { id: parsedRecipeId }, // ← Use parsed integer here
-    include: {
-      materials: {
-        include: {
-          material: {
-            include: {
-              prices: {
-                where: {
-                  date: {
-                    lte: productionDate, // Prices on or before production date
-                  },
-                },
-                orderBy: { date: 'desc' },
-                take: 1,
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (!recipe) throw new Error('Recipe not found');
-
-  let totalCost = 0;
-
-  for (const recipeMaterial of recipe.materials) {
-    const latestPrice = recipeMaterial.material.prices[0]?.price || 0;
-    totalCost += latestPrice * recipeMaterial.quantity;
-  }
-
-  // Calculate cost per unit and multiply by batch quantity
-  const unitCost = totalCost / recipe.quantity;
-  return Math.round(unitCost * batchQuantity); // Round to whole Kamas
+async function calculateBatchCost(itemId, batchQuantity, productionDate) {
+  const costPerUnit = await calculateItemCost(itemId, productionDate);
+  return Math.round(costPerUnit * batchQuantity);
 }
 
 export async function GET() {
   try {
-    const batches = await prisma.productionBatch.findMany({
+    const batches = await prisma.productionOrder.findMany({
       include: {
-        recipe: true,
+        item: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
-      take: 50, // Last 50 production runs
+      take: 50,
     });
 
     return NextResponse.json(batches);
@@ -69,24 +27,35 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { recipeId, quantity, date } = await request.json();
+    const { itemId, quantity, sellingPrice, date } = await request.json();
 
-    if (!recipeId || !quantity) {
-      return NextResponse.json({ error: 'Recipe and quantity are required' }, { status: 400 });
+    if (!itemId || !quantity || !sellingPrice) {
+      return NextResponse.json({ error: 'Item, quantity, and selling price are required' }, { status: 400 });
+    }
+
+    const parsedItemId = parseInt(itemId);
+    const parsedQuantity = parseInt(quantity);
+    const parsedSellingPrice = parseInt(sellingPrice);
+
+    if (isNaN(parsedItemId) || isNaN(parsedQuantity) || isNaN(parsedSellingPrice)) {
+      return NextResponse.json({ error: 'Invalid input values' }, { status: 400 });
     }
 
     const productionDate = date ? new Date(date) : new Date();
-    const totalCost = await calculateBatchCost(recipeId, quantity, productionDate);
+    const totalCost = await calculateBatchCost(parsedItemId, parsedQuantity, productionDate);
+    const expectedProfit = parsedSellingPrice * parsedQuantity - totalCost;
 
-    const batch = await prisma.productionBatch.create({
+    const batch = await prisma.productionOrder.create({
       data: {
-        recipeId: parseInt(recipeId),
-        quantity: parseInt(quantity),
+        itemId: parsedItemId,
+        quantity: parsedQuantity,
         totalCost,
+        sellingPrice: parsedSellingPrice,
+        expectedProfit,
         date: productionDate,
       },
       include: {
-        recipe: true,
+        item: true,
       },
     });
 

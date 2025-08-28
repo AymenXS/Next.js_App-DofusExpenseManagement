@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,11 +9,11 @@ datasource db {
 }
 
 model RawMaterial {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
+  id        Int                @id @default(autoincrement())
+  name      String             @unique
   prices    RawMaterialPrice[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 }
 
 model RawMaterialPrice {
@@ -25,29 +26,29 @@ model RawMaterialPrice {
 }
 
 model Item {
-  id            Int      @id @default(autoincrement())
-  name          String   @unique
-  description   String?
-  quantity Int      @default(1)
-  isFinal       Boolean  @default(false)
-  sellingPrice  Int?
-  ingredients   ItemIngredient[]
+  id               Int               @id @default(autoincrement())
+  name             String            @unique
+  description      String?
+  quantity         Int               @default(1)
+  isFinal          Boolean           @default(false)
+  sellingPrice     Int?
+  ingredients      ItemIngredient[]  @relation("CraftedItem")
   productionOrders ProductionOrder[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
   @@map("items")
 }
 
 model ItemIngredient {
   id             Int      @id @default(autoincrement())
-  itemId         Int      // The item being crafted
-  ingredientId   Int      // Could be RawMaterial OR another Item
-  ingredientType String   // "RAW_MATERIAL" or "ITEM"
+  itemId         Int
+  ingredientId   Int
+  ingredientType String
   quantity       Int
   item           Item     @relation("CraftedItem", fields: [itemId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
-  
+
   @@index([ingredientId, ingredientType])
   @@index([itemId])
   @@map("item_ingredients")
@@ -57,12 +58,12 @@ model ProductionOrder {
   id             Int      @id @default(autoincrement())
   itemId         Int
   quantity       Int
-  totalCost      Int      // Auto-calculated
-  sellingPrice   Int      // Manual input
-  expectedProfit Int      // Auto-calculated: (sellingPrice * quantity) - totalCost
+  totalCost      Int
+  sellingPrice   Int
+  expectedProfit Int
   date           DateTime @default(now())
   item           Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   createdAt      DateTime @default(now())
-  
+
   @@map("production_orders")
 }

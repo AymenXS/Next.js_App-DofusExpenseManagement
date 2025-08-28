@@ -1,15 +1,15 @@
 'use client';
 import { useState } from 'react';
 import { useProduction } from '@/context/ProductionContext';
-import { useRecipes } from '@/context/RecipesContext';
+import { useItems } from '@/context/ItemsContext';
 
 export default function ProductionForm() {
-  const [recipeId, setRecipeId] = useState('');
+  const [itemId, setItemId] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const { produceBatch, isProducing } = useProduction();
-  const { recipes, loading } = useRecipes();
+  const { items, loading } = useItems();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ export default function ProductionForm() {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-bold mb-4">Produce Batch</h2>
-        <div className="text-center py-8">Loading recipes...</div>
+        <div className="text-center py-8">Loading items...</div>
       </div>
     );
   }
@@ -47,15 +47,15 @@ export default function ProductionForm() {
         <div>
           <label className="block text-sm font-medium mb-1">Recipe</label>
           <select
-            value={recipeId}
-            onChange={(e) => setRecipeId(e.target.value)}
+            value={itemId}
+            onChange={(e) => setItemId(e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
             <option value="">Select Recipe</option>
-            {recipes.map((recipe) => (
-              <option key={recipe.id} value={recipe.id}>
-                {recipe.name}
+            {items.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name}
               </option>
             ))}
           </select>

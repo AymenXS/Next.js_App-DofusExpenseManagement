@@ -46,7 +46,7 @@ export default function RecentProduction() {
         {production.recentBatches.slice(0, 5).map((batch) => (
           <div key={batch.id} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
             <div className="flex-1">
-              <p className="font-medium text-gray-900">{batch.recipeName}</p>
+              <p className="font-medium text-gray-900">{batch.item.name}</p> 
               <p className="text-sm text-gray-500">×{batch.quantity}</p>
             </div>
             <div className="text-right">

@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const [totalStats, recentBatches, materialUsage] = await Promise.all([
       // Total production statistics
-      prisma.productionBatch.aggregate({
+      prisma.productionOrder.aggregate({
         _sum: {
           quantity: true,
           totalCost: true,
@@ -16,7 +16,7 @@ export async function GET() {
       }),
 
       // Last 10 production batches
-      prisma.productionBatch.findMany({
+      prisma.productionOrder.findMany({
         take: 10,
         include: {
           recipe: true,

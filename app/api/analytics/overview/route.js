@@ -8,13 +8,13 @@ export async function GET() {
       prisma.rawMaterial.count(),
 
       // Total recipes count
-      prisma.recipe.count(),
+      prisma.item.count(),
 
       // Total production batches
-      prisma.productionBatch.count(),
+      prisma.productionOrder.count(),
 
       // Recent production batches (last 5)
-      prisma.productionBatch.findMany({
+      prisma.productionOrder.findMany({
         take: 5,
         include: {
           recipe: true,

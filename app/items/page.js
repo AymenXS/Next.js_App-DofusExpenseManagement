@@ -1,6 +1,6 @@
 'use client'
-import AddRecipeForm from '@/components/recipes/AddRecipeForm'
-import RecipesList from '@/components/recipes/RecipesList'
+import AddRecipeForm from '@/components/items/AddItemForm'
+import RecipesList from '@/components/items/ItemsList'
 
 export default function RecipesPage() {
   return (

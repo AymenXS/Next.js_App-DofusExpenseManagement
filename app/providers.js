@@ -1,19 +1,17 @@
-'use client'
-import { MaterialsProvider } from '@/context/MaterialsContext'
-import { RecipesProvider } from '@/context/RecipesContext'
-import { ProductionProvider } from '@/context/ProductionContext'
-import { AnalyticsProvider } from '@/context/AnalyticsContext'
+'use client';
+import { MaterialsProvider } from '@/context/MaterialsContext';
+import { ItemsProvider } from '@/context/ItemsContext';
+import { ProductionProvider } from '@/context/ProductionContext';
+import { AnalyticsProvider } from '@/context/AnalyticsContext';
 
 export function Providers({ children }) {
   return (
     <MaterialsProvider>
-      <RecipesProvider>
+      <ItemsProvider>
         <ProductionProvider>
-          <AnalyticsProvider>
-            {children}
-          </AnalyticsProvider>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
         </ProductionProvider>
-      </RecipesProvider>
+      </ItemsProvider>
     </MaterialsProvider>
-  )
+  );
 }

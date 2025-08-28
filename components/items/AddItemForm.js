@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { useRecipes } from '@/context/RecipesContext';
 import { useMaterials } from '@/context/MaterialsContext';
+import { useItems } from '@/context/ItemsContext';
 
 export default function AddRecipeForm() {
   const [name, setName] = useState('');
@@ -9,7 +9,7 @@ export default function AddRecipeForm() {
   const [ingredients, setIngredients] = useState([{ materialId: '', quantity: 1 }]);
 
   const { materials, loading: materialsLoading } = useMaterials();
-  const { addRecipe, isAdding } = useRecipes();
+  const { addItem, isAdding } = useItems();
 
   const addIngredient = () => {
     setIngredients([...ingredients, { materialId: '', quantity: 1 }]);
@@ -34,11 +34,11 @@ export default function AddRecipeForm() {
     const validIngredients = ingredients.filter((ing) => ing.materialId && ing.quantity > 0);
 
     if (!name || validIngredients.length === 0) {
-      alert('Please provide a recipe name and at least one ingredient');
+      alert('Please provide a item name and at least one ingredient');
       return;
     }
 
-    const result = await addRecipe({
+    const result = await addItem({
       name,
       quantity,
       materials: validIngredients,
@@ -48,7 +48,7 @@ export default function AddRecipeForm() {
       setName('');
       setQuantity(1);
       setIngredients([{ materialId: '', quantity: 1 }]);
-      alert('Recipe created successfully!');
+      alert('Item created successfully!');
     } else {
       alert(`Error: ${result.error}`);
     }
@@ -57,7 +57,7 @@ export default function AddRecipeForm() {
   if (materialsLoading) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">Add New Recipe</h2>
+        <h2 className="text-xl font-bold mb-4">Add New Item</h2>
         <div className="text-center py-8">Loading materials...</div>
       </div>
     );
@@ -65,11 +65,11 @@ export default function AddRecipeForm() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Add New Recipe</h2>
+      <h2 className="text-xl font-bold mb-4">Add New Item</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Recipe Name</label>
+          <label className="block text-sm font-medium mb-1">Item Name</label>
           <input
             type="text"
             value={name}
@@ -145,7 +145,7 @@ export default function AddRecipeForm() {
           disabled={isAdding}
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
         >
-          {isAdding ? 'Creating Recipe...' : 'Create Recipe'}
+          {isAdding ? 'Creating Item...' : 'Create Item'}
         </button>
       </form>
     </div>

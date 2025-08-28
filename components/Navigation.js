@@ -9,7 +9,7 @@ export default function Navigation() {
   const navItems = [
     { href: '/', label: 'Home', icon: '🏠' },
     { href: '/materials', label: 'Materials', icon: '📦' },
-    { href: '/recipes', label: 'Recipes', icon: '📋' },
+    { href: '/items', label: 'Items', icon: '📋' },
     { href: '/production', label: 'Production', icon: '⚡' },
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
   ];
