@@ -37,7 +37,7 @@ export async function GET() {
       averageCostPerItem: totalStats._sum.quantity ? Math.round((totalStats._sum.totalCost || 0) / totalStats._sum.quantity) : 0,
       recentBatches: recentBatches.map((batch) => ({
         id: batch.id,
-        recipeName: batch.recipe.name,
+        itemName: batch.item.name,
         quantity: batch.quantity,
         totalCost: batch.totalCost,
         date: batch.createdAt,

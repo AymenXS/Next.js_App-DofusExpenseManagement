@@ -6,6 +6,7 @@ import { useItems } from '@/context/ItemsContext';
 export default function ProductionForm() {
   const [itemId, setItemId] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [sellingPrice, setSellingPrice] = useState(''); 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
 
   const { produceBatch, isProducing } = useProduction();
@@ -14,16 +15,22 @@ export default function ProductionForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!recipeId || quantity < 1) {
-      alert('Please select a recipe and quantity');
+    if (!itemId || !quantity || !sellingPrice) {
+      alert('Please select an item, quantity, and selling price');
       return;
     }
 
-    const result = await produceBatch({ recipeId, quantity, date });
+    const result = await produceBatch({
+      itemId,
+      quantity: parseInt(quantity),
+      sellingPrice: parseInt(sellingPrice),
+      date,
+    });
 
     if (result.success) {
-      setRecipeId('');
+      setItemId('');
       setQuantity(1);
+      setSellingPrice('');
       alert('Production batch created successfully!');
     } else {
       alert(`Error: ${result.error}`);
@@ -44,15 +51,16 @@ export default function ProductionForm() {
       <h2 className="text-xl font-bold mb-4">Produce Batch</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Item selection */}
         <div>
-          <label className="block text-sm font-medium mb-1">Recipe</label>
+          <label className="block text-sm font-medium mb-1">Item</label>
           <select
             value={itemId}
             onChange={(e) => setItemId(e.target.value)}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           >
-            <option value="">Select Recipe</option>
+            <option value="">Select Item</option>
             {items.map((item) => (
               <option key={item.id} value={item.id}>
                 {item.name}
@@ -61,6 +69,7 @@ export default function ProductionForm() {
           </select>
         </div>
 
+        {/* Quantity input */}
         <div>
           <label className="block text-sm font-medium mb-1">Quantity</label>
           <input
@@ -73,6 +82,20 @@ export default function ProductionForm() {
           />
         </div>
 
+        {/* Selling Price input (ADD THIS) */}
+        <div>
+          <label className="block text-sm font-medium mb-1">Selling Price (Kamas)</label>
+          <input
+            type="number"
+            min="1"
+            value={sellingPrice}
+            onChange={(e) => setSellingPrice(e.target.value)}
+            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+
+        {/* Date input */}
         <div>
           <label className="block text-sm font-medium mb-1">Production Date</label>
           <input

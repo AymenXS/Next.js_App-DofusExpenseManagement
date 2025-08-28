@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
+    console.log('GET request received');
+
     const [totalMaterials, totalRecipes, totalBatches, recentBatches] = await Promise.all([
       // Total materials count
       prisma.rawMaterial.count(),
@@ -31,12 +33,14 @@ export async function GET() {
       totalBatches,
       recentBatches: recentBatches.map((batch) => ({
         id: batch.id,
-        recipeName: batch.recipe.name,
+        itemName: batch.item.name,
         quantity: batch.quantity,
         totalCost: batch.totalCost,
         date: batch.createdAt,
       })),
     };
+
+    console.log('GET ENDED');
 
     return NextResponse.json(overviewData);
   } catch (error) {
